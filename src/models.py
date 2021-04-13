@@ -1,11 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-
-
-db = SQLAlchemy()
-
-   
-   
+db = SQLAlchemy()   
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +31,9 @@ class People(db.Model):
     gender = db.Column(db.String(50), nullable=False)
     homeworld = db.Column(db.String(250), nullable=False)
     url = db.Column(db.String(250), nullable=False)
+    def __repr__(self):
+        return '<Character %r>' % self.name
+
 
 class Planets(db.Model):
     __tablename__ = 'planets'
@@ -51,6 +49,8 @@ class Planets(db.Model):
     surface_water =  db.Column(db.Integer, nullable=False)
     population =  db.Column(db.Integer, nullable=False)
     url = db.Column(db.String(250), nullable=False)
+    def __repr__(self):
+        return '<Planet %r>' % self.name
 
 class Favorites(db.Model):
     __tablename__ = 'favorites'
@@ -59,4 +59,6 @@ class Favorites(db.Model):
     tipo = db.Column(db.Integer, nullable=False)
     favorite_id = db.Column(db.Integer, nullable=False)
     usuario_id = db.Column(db.Integer,db.ForeignKey('user.id'))
-    users = db.relationship(User)   
+    users = db.relationship(User)
+    def __repr__(self):
+        return '<Favorite %r>' % self.favorite_id   
