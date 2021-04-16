@@ -40,14 +40,14 @@ class Planets(db.Model):
    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
-    rotation_period = db.Column(db.Integer, nullable=False)
-    orbital_period = db.Column(db.Integer, nullable=False)
-    diameter = db.Column(db.Integer, nullable=False)
+    rotation_period = db.Column(db.String(50), nullable=False)
+    orbital_period = db.Column(db.String(50), nullable=False)
+    diameter = db.Column(db.String(50), nullable=False)
     climate = db.Column(db.String(50), nullable=False)
     gravity = db.Column(db.String(50), nullable=False)
     terrain = db.Column(db.String(50), nullable=False)
-    surface_water =  db.Column(db.Integer, nullable=False)
-    population =  db.Column(db.Integer, nullable=False)
+    surface_water =  db.Column(db.String(50), nullable=False)
+    population =  db.Column(db.String(50), nullable=False)
     url = db.Column(db.String(250), nullable=False)
     def __repr__(self):
         return '<Planet %r>' % self.name

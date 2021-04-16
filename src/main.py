@@ -9,6 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, People, Planets, Favorites
+from data import listplanets
 #import JWT for tokenization
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
@@ -44,6 +45,32 @@ def handle_hello():
         "msg": "Hello, this is your GET /user response "
     }
     return jsonify(response_body), 200
+
+
+
+@app.route('/load', methods=['GET'])
+def load_data():
+    for planet in listplanets:
+        new_planet=Planets()
+        new_planet.name=planet["name"]
+        new_planet.rotation_period =planet["rotation_period"]
+        new_planet.orbital_period = planet["orbital_period"]
+        new_planet.diameter = planet["diameter"]
+        new_planet.climate = planet["climate"]
+        new_planet.gravity = planet["gravity"]
+        new_planet.terrain = planet["terrain"]
+        new_planet.surface_water =  planet["surface_water"]
+        new_planet.population =  planet["population"]
+        new_planet.url = planet["url"]
+        db.session.add(new_planet)
+        db.session.commit()
+
+    response_body = {
+        "msg": "loading... initial data to database...  "
+    }
+    return jsonify(response_body), 200
+
+
 
 
 @app.route('/register', methods=['POST'])
