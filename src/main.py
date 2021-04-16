@@ -9,7 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, People, Planets, Favorites
-from data import listplanets
+from data import listplanets, listpeople
 #import JWT for tokenization
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
@@ -46,23 +46,43 @@ def handle_hello():
     }
     return jsonify(response_body), 200
 
+@app.route('/people', methods=['GET'])
+def people():
+    thepeople = People.query.all()  
+    print(thepeople) 
+    return jsonify(thepeople), 200
+
 
 
 @app.route('/load', methods=['GET'])
 def load_data():
     for planet in listplanets:
-        new_planet=Planets()
-        new_planet.name=planet["name"]
-        new_planet.rotation_period =planet["rotation_period"]
-        new_planet.orbital_period = planet["orbital_period"]
-        new_planet.diameter = planet["diameter"]
-        new_planet.climate = planet["climate"]
-        new_planet.gravity = planet["gravity"]
-        new_planet.terrain = planet["terrain"]
-        new_planet.surface_water =  planet["surface_water"]
-        new_planet.population =  planet["population"]
-        new_planet.url = planet["url"]
-        db.session.add(new_planet)
+         new_planet=Planets()
+         new_planet.name=planet["name"]
+         new_planet.rotation_period =str(planet["rotation_period"])
+         new_planet.orbital_period = planet["orbital_period"]
+         new_planet.diameter = planet["diameter"]
+         new_planet.climate = planet["climate"]
+         new_planet.gravity = planet["gravity"]
+         new_planet.terrain = planet["terrain"]
+         new_planet.surface_water =  planet["surface_water"]
+         new_planet.population =  planet["population"]
+         new_planet.url = planet["url"]
+         db.session.add(new_planet)
+         db.session.commit()
+
+    for person in listpeople:
+        new_person=People()
+        new_person.name=person["name"]  
+        new_person.height = person["height"]
+        new_person.hair_color =person["hair_color"]
+        new_person.skin_color = person["skin_color"]
+        new_person.eye_color = person["eye_color"]
+        new_person.birth_year = person["birth_year"]
+        new_person.gender = person["gender"]
+        new_person.homeworld = person["homeworld"]
+        new_person.url = person["url"]
+        db.session.add(new_person)
         db.session.commit()
 
     response_body = {

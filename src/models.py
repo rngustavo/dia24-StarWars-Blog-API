@@ -19,7 +19,7 @@ class User(db.Model):
         }
 
 class People(db.Model):
-    __tablename__ = 'people'
+    __tablename__ = 'people_sw'
    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
@@ -33,10 +33,23 @@ class People(db.Model):
     url = db.Column(db.String(250), nullable=False)
     def __repr__(self):
         return '<Character %r>' % self.name
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name" :  self.name,
+            "height" : self.height,
+            "hair_color" : self.hair_color,
+            "skin_color" : self.skin_color,
+            "eye_color" : self.eye_color,
+            "birth_year" : self.birth_year,
+            "gender" : self.gender,
+            "homeworld" : self.homeworld,
+            "url" : self.url
+        }
 
 
 class Planets(db.Model):
-    __tablename__ = 'planets'
+    __tablename__ = 'planets_sw'
    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
@@ -47,13 +60,13 @@ class Planets(db.Model):
     gravity = db.Column(db.String(50), nullable=False)
     terrain = db.Column(db.String(50), nullable=False)
     surface_water =  db.Column(db.String(50), nullable=False)
-    population =  db.Column(db.String(50), nullable=False)
+    population =  db.Column(db.String(50), nullable=True)
     url = db.Column(db.String(250), nullable=False)
     def __repr__(self):
         return '<Planet %r>' % self.name
 
 class Favorites(db.Model):
-    __tablename__ = 'favorites'
+    __tablename__ = 'favorites_sw'
    
     id = db.Column(db.Integer, primary_key=True)
     tipo = db.Column(db.Integer, nullable=False)
