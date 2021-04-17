@@ -56,11 +56,25 @@ def people():
     #return jsonify(response_body), 200 -->ASI NO SIRVE
     return jsonify({"results":all_people, "message":"People's List"}), 200
 
+@app.route('/people/<id>', methods=['GET'])
+def getperson(id):    
+    person = People.query.get(id) 
+    person=person.serialize()   
+    return jsonify(person), 200
+
+
 @app.route('/planets', methods=['GET'])
 def planets():    
     all_planets = Planets.query.all()   
     all_planets = list(map(lambda x: x.serialize(), all_planets))    
     return jsonify({"results":all_planets, "message":"Planets's List"}), 200
+
+@app.route('/planets/<id>', methods=['GET'])
+def getplanet(id):    
+    planet = Planets.query.get(id) 
+    planet=planet.serialize()   
+    return jsonify(planet), 200
+
 
 @app.route('/load', methods=['GET'])
 def load_data():
