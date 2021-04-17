@@ -64,6 +64,20 @@ class Planets(db.Model):
     url = db.Column(db.String(250), nullable=False)
     def __repr__(self):
         return '<Planet %r>' % self.name
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name" : self.name,
+            "rotation_period" : self.rotation_period,
+            "orbital_period" : self.orbital_period,
+            "diameter" : self.diameter,
+            "climate" : self.climate,
+            "gravity" : self.gravity,
+            "terrain" : self.terrain,
+            "surface_water" : self.surface_water,
+            "population" : self.population,
+            "url" : self.url
+        }
 
 class Favorites(db.Model):
     __tablename__ = 'favorites_sw'

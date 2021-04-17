@@ -47,12 +47,20 @@ def handle_hello():
     return jsonify(response_body), 200
 
 @app.route('/people', methods=['GET'])
-def people():
-    thepeople = People.query.all()  
-    print(thepeople) 
-    return jsonify(thepeople), 200
+def people():    
+    all_people = People.query.all()   
+    all_people = list(map(lambda x: x.serialize(), all_people))
 
+    #print(all_people) 
+    #return thepeople.json, 200 -->ASI NO SIRVE
+    #return jsonify(response_body), 200 -->ASI NO SIRVE
+    return jsonify({"results":all_people, "message":"People's List"}), 200
 
+@app.route('/planets', methods=['GET'])
+def planets():    
+    all_planets = Planets.query.all()   
+    all_planets = list(map(lambda x: x.serialize(), all_planets))    
+    return jsonify({"results":all_planets, "message":"Planets's List"}), 200
 
 @app.route('/load', methods=['GET'])
 def load_data():
