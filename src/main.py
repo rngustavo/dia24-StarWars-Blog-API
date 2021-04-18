@@ -149,15 +149,15 @@ def login():
     password = request.json.get("password", None)
 
     # valida si estan vacios los ingresos
-    if email is None:
+    if not email:
         return jsonify({"msg": "No email was provided"}), 400
-    if password is None:
+    if not password:
         return jsonify({"msg": "No password was provided"}), 400
 
     # para proteger contraseñas usen hashed_password
     # busca usuario en BBDD
     user = User.query.filter_by(email=email, password=password).first()
-    if user is None:
+    if not user:
         return jsonify({"msg": "Invalid username or password"}), 401
     else:
         # crear token
