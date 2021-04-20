@@ -180,8 +180,6 @@ def load_data():
     return jsonify(response_body), 200
 
 
-
-
 @app.route('/register', methods=['POST'])
 def register_user():
     email = request.json.get("email", None)

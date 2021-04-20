@@ -1,0 +1,20 @@
+si carga en el navegador  la ruta xxxxxxxxxxxxxx.oi/load
+se cargan hace una carga masiva de planetas y personajes
+
+json para el post de register
+{"email": "rngustavo@gmail.com", "password":"123"}
+
+ json para post de login
+ {"email": "rngustavo@yahoo.com", "password":"123"}
+
+
+json para el delete  de favoritos
+ {"favorite_id": 1,"tipo": 2 }
+
+json para post de favoritos
+ {"favorite_id": 1,"tipo": 2 }
+
+
+
+
+
