@@ -76,6 +76,73 @@ def getplanet(id):
     return jsonify(planet), 200
 
 
+@app.route('/user/favorites', methods=['GET'])
+@jwt_required()
+def user_favorites():
+     # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuarios en base de datos
+    user = User.query.get(current_id)   
+    if user:
+        all_favorites = Favorites.query.filter_by(usuario_id = current_id) 
+        all_favorites = list(map(lambda x: x.serialize(), all_favorites))
+        return jsonify({"results":all_favorites, "message":"Favorites's List"}),200 
+    else :
+        return jsonify({"msg": "Invalid Token"}), 400
+
+@app.route('/user/favorites', methods=['POST'])
+@jwt_required()
+def add_user_favorites():
+    tipo = request.json.get("tipo", None)
+    favorite_id = request.json.get("favorite_id", None)   
+    # valida si estan vacios los ingresos
+    if not tipo:
+        return jsonify({"msg": "No type was provided"}), 400
+    if not favorite_id:
+        return jsonify({"msg": "No favorite was provided"}), 400    
+    
+    # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuario en base de datos
+    user = User.query.get(current_id)
+    print(user.id)
+    if not user:
+        # the user was not found on the database
+        return jsonify({"msg": "Invalid Token"}), 400
+    else:       
+        new_favorite=Favorites()
+        new_favorite.tipo=tipo
+        new_favorite.favorite_id=favorite_id  
+        new_favorite.usuario_id=user.id     
+        db.session.add(new_favorite)
+        db.session.commit()
+        return jsonify({"msg": "Favorite created successfully"}), 200
+
+@app.route('/user/favorites', methods=['DELETE'])
+@jwt_required()
+def delete_user_favorites():
+    tipo = request.json.get("tipo", None)
+    favorite_id = request.json.get("favorite_id", None)   
+    # valida si estan vacios los ingresos
+    if not tipo:
+        return jsonify({"msg": "No type was provided"}), 400
+    if not favorite_id:
+        return jsonify({"msg": "No favorite was provided"}), 400    
+    
+    # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuario en base de datos
+    user = User.query.get(current_id)
+    print(user.id)
+    if not user:
+        # the user was not found on the database
+        return jsonify({"msg": "Invalid Token"}), 400
+    else:
+        favorite = Favorites.query.filter_by(tipo=tipo,favorite_id=favorite_id).first()      
+        db.session.delete(favorite)
+        db.session.commit()
+        return jsonify({"msg": "Favorite delete successfully"}), 200
+
 @app.route('/load', methods=['GET'])
 def load_data():
     for planet in listplanets:

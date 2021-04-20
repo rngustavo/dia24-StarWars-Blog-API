@@ -88,4 +88,10 @@ class Favorites(db.Model):
     usuario_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     users = db.relationship(User)
     def __repr__(self):
-        return '<Favorite %r>' % self.favorite_id   
+        return '<Favorite %r>' % self.favorite_id  
+
+    def serialize(self):
+        return {
+            "tipo" : self.tipo,
+            "favorite_id" : self.favorite_id
+        }
