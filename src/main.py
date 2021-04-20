@@ -38,111 +38,7 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-    return jsonify(response_body), 200
-
-@app.route('/people', methods=['GET'])
-def people():    
-    all_people = People.query.all()   
-    all_people = list(map(lambda x: x.serialize(), all_people))
-
-    #print(all_people) 
-    #return thepeople.json, 200 -->ASI NO SIRVE
-    #return jsonify(response_body), 200 -->ASI NO SIRVE
-    return jsonify({"results":all_people, "message":"People's List"}), 200
-
-@app.route('/people/<id>', methods=['GET'])
-def getperson(id):    
-    person = People.query.get(id) 
-    person=person.serialize()   
-    return jsonify(person), 200
-
-
-@app.route('/planets', methods=['GET'])
-def planets():    
-    all_planets = Planets.query.all()   
-    all_planets = list(map(lambda x: x.serialize(), all_planets))    
-    return jsonify({"results":all_planets, "message":"Planets's List"}), 200
-
-@app.route('/planets/<id>', methods=['GET'])
-def getplanet(id):    
-    planet = Planets.query.get(id) 
-    planet=planet.serialize()   
-    return jsonify(planet), 200
-
-
-@app.route('/user/favorites', methods=['GET'])
-@jwt_required()
-def user_favorites():
-     # busca la identidad del token
-    current_id = get_jwt_identity()
-    # busca usuarios en base de datos
-    user = User.query.get(current_id)   
-    if user:
-        all_favorites = Favorites.query.filter_by(usuario_id = current_id) 
-        all_favorites = list(map(lambda x: x.serialize(), all_favorites))
-        return jsonify({"results":all_favorites, "message":"Favorites's List"}),200 
-    else :
-        return jsonify({"msg": "Invalid Token"}), 400
-
-@app.route('/user/favorites', methods=['POST'])
-@jwt_required()
-def add_user_favorites():
-    tipo = request.json.get("tipo", None)
-    favorite_id = request.json.get("favorite_id", None)   
-    # valida si estan vacios los ingresos
-    if not tipo:
-        return jsonify({"msg": "No type was provided"}), 400
-    if not favorite_id:
-        return jsonify({"msg": "No favorite was provided"}), 400    
-    
-    # busca la identidad del token
-    current_id = get_jwt_identity()
-    # busca usuario en base de datos
-    user = User.query.get(current_id)
-    print(user.id)
-    if not user:
-        # the user was not found on the database
-        return jsonify({"msg": "Invalid Token"}), 400
-    else:       
-        new_favorite=Favorites()
-        new_favorite.tipo=tipo
-        new_favorite.favorite_id=favorite_id  
-        new_favorite.usuario_id=user.id     
-        db.session.add(new_favorite)
-        db.session.commit()
-        return jsonify({"msg": "Favorite created successfully"}), 200
-
-@app.route('/user/favorites', methods=['DELETE'])
-@jwt_required()
-def delete_user_favorites():
-    tipo = request.json.get("tipo", None)
-    favorite_id = request.json.get("favorite_id", None)   
-    # valida si estan vacios los ingresos
-    if not tipo:
-        return jsonify({"msg": "No type was provided"}), 400
-    if not favorite_id:
-        return jsonify({"msg": "No favorite was provided"}), 400    
-    
-    # busca la identidad del token
-    current_id = get_jwt_identity()
-    # busca usuario en base de datos
-    user = User.query.get(current_id)
-    print(user.id)
-    if not user:
-        # the user was not found on the database
-        return jsonify({"msg": "Invalid Token"}), 400
-    else:
-        favorite = Favorites.query.filter_by(tipo=tipo,favorite_id=favorite_id).first()      
-        db.session.delete(favorite)
-        db.session.commit()
-        return jsonify({"msg": "Favorite delete successfully"}), 200
-
+#hace una carga inicial de la base de datos
 @app.route('/load', methods=['GET'])
 def load_data():
     for planet in listplanets:
@@ -179,7 +75,119 @@ def load_data():
     }
     return jsonify(response_body), 200
 
+#prueba del api esta online
+@app.route('/user', methods=['GET'])
+def handle_hello():
 
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+    return jsonify(response_body), 200
+
+#retorna los pesonajes
+@app.route('/people', methods=['GET'])
+def people():    
+    all_people = People.query.all()   
+    all_people = list(map(lambda x: x.serialize(), all_people))
+
+    #print(all_people) 
+    #return thepeople.json, 200 -->ASI NO SIRVE
+    #return jsonify(response_body), 200 -->ASI NO SIRVE
+    return jsonify({"results":all_people, "message":"People's List"}), 200
+
+#retorna un pesonaje determinado
+@app.route('/people/<id>', methods=['GET'])
+def getperson(id):    
+    person = People.query.get(id) 
+    person=person.serialize()   
+    return jsonify(person), 200
+
+#retorna los planetas
+@app.route('/planets', methods=['GET'])
+def planets():    
+    all_planets = Planets.query.all()   
+    all_planets = list(map(lambda x: x.serialize(), all_planets))    
+    return jsonify({"results":all_planets, "message":"Planets's List"}), 200
+
+#retorna un planeta determinado
+@app.route('/planets/<id>', methods=['GET'])
+def getplanet(id):    
+    planet = Planets.query.get(id) 
+    planet=planet.serialize()   
+    return jsonify(planet), 200
+
+#retorna los favoritos de un usuario segun el id detro del token
+@app.route('/user/favorites', methods=['GET'])
+@jwt_required()
+def user_favorites():
+     # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuarios en base de datos
+    user = User.query.get(current_id)   
+    if user:
+        all_favorites = Favorites.query.filter_by(usuario_id = current_id) 
+        all_favorites = list(map(lambda x: x.serialize(), all_favorites))
+        return jsonify({"results":all_favorites, "message":"Favorites's List"}),200 
+    else :
+        return jsonify({"msg": "Invalid Token"}), 400
+
+#guarda un favorito al usuario
+@app.route('/user/favorites', methods=['POST'])
+@jwt_required()
+def add_user_favorites():
+    tipo = request.json.get("tipo", None)
+    favorite_id = request.json.get("favorite_id", None)   
+    # valida si estan vacios los ingresos
+    if not tipo:
+        return jsonify({"msg": "No type was provided"}), 400
+    if not favorite_id:
+        return jsonify({"msg": "No favorite was provided"}), 400    
+    
+    # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuario en base de datos
+    user = User.query.get(current_id)
+    print(user.id)
+    if not user:
+        # the user was not found on the database
+        return jsonify({"msg": "Invalid Token"}), 400
+    else:       
+        new_favorite=Favorites()
+        new_favorite.tipo=tipo
+        new_favorite.favorite_id=favorite_id  
+        new_favorite.usuario_id=user.id     
+        db.session.add(new_favorite)
+        db.session.commit()
+        return jsonify({"msg": "Favorite created successfully"}), 200
+
+#borra un favorito determinado
+@app.route('/user/favorites', methods=['DELETE'])
+@jwt_required()
+def delete_user_favorites():
+    tipo = request.json.get("tipo", None)
+    favorite_id = request.json.get("favorite_id", None)   
+    # valida si estan vacios los ingresos
+    if not tipo:
+        return jsonify({"msg": "No type was provided"}), 400
+    if not favorite_id:
+        return jsonify({"msg": "No favorite was provided"}), 400    
+    
+    # busca la identidad del token
+    current_id = get_jwt_identity()
+    # busca usuario en base de datos
+    user = User.query.get(current_id)
+    print(user.id)
+    if not user:
+        # the user was not found on the database
+        return jsonify({"msg": "Invalid Token"}), 400
+    else:
+        favorite = Favorites.query.filter_by(tipo=tipo,favorite_id=favorite_id).first()      
+        db.session.delete(favorite)
+        db.session.commit()
+        return jsonify({"msg": "Favorite delete successfully"}), 200
+
+
+#genera un usuario
 @app.route('/register', methods=['POST'])
 def register_user():
     email = request.json.get("email", None)
@@ -207,7 +215,8 @@ def register_user():
         db.session.add(new_user)
         db.session.commit()
         return jsonify({"msg": "User created successfully"}), 200
-    
+
+#devuelve el token de un usuario registrado  
 @app.route('/login', methods=['POST']) 
 def login():
     email = request.json.get("email", None)
@@ -229,6 +238,7 @@ def login():
         my_token = create_access_token(identity=user.id)
         return jsonify({"token": my_token})
 
+# ejemplo de test de token
 @app.route("/protected", methods=['GET', 'POST'])
 # protege ruta con esta funcion
 @jwt_required()
