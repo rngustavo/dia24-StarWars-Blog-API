@@ -192,8 +192,8 @@ def delete_user_favorites():
 def register_user():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    print('email', email)
-    print('pass', password)
+   # print('email', email)
+   # print('pass', password)
     # valida si estan vacios los ingresos
     if not email:
         return jsonify({"msg": "No email was provided"}), 400
