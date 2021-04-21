@@ -1,3 +1,13 @@
+comandos para iniciar el server
+pipenv install;
+mysql -u root -e "CREATE DATABASE example";
+pipenv run migrate;
+pipenv run upgrade;
+pipenv run start;
+
+
+
+
 si digita  en el navegador  la ruta xxxxxxxxxxxxxx.oi/load
 se  hace una carga masiva de planetas y personajes!!
 
